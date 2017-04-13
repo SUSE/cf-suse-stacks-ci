@@ -1,0 +1,18 @@
+---
+platform: linux
+image_resource:
+  type: docker-image
+  source:
+    repository: cfbuildpacks/ci
+inputs:
+  - name: src-ci
+  - name: src
+  - name: version
+  - name: receipt
+outputs:
+  - name: out
+#outputs:
+#  - name: cflinuxfs2-artifacts
+#  - name: receipt-artifacts
+run:
+  path: src-ci/concourse/tasks/make-rootfs/run.sh

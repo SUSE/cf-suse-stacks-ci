@@ -1,0 +1,85 @@
+# This defines the concourse pipeline used to build the opensusefs2 stack
+---
+resources: #####################################################################
+### git repos ###
+- name: stacks-git
+  type: git
+  source:
+    uri: https://github.com/SUSE/cf-suse-stacks.git
+    branch: opensusefs2
+- name: src-ci
+  type: git
+  source:
+    uri: https://github.com/SUSE/cf-suse-stacks-ci.git
+    branch: master
+### blob storage ###
+- name: artifact
+  type: s3
+  source:
+    endpoint: {{s3-endpoint}}
+    bucket: {{s3-bucket}}
+    regexp: opensusefs2-(.*).tar.gz$
+    access_key_id: {{s3-access-key}}
+    secret_access_key: {{s3-secret-key}}
+- name: receipt
+  type: s3
+  source:
+    endpoint: {{s3-endpoint}}
+    bucket: {{s3-bucket}}
+    regexp: opensusefs2-(.*).receipt.txt$
+    access_key_id: {{s3-access-key}}
+    secret_access_key: {{s3-secret-key}}
+    # Note that s3 resource doesn't support initial name/contents yet, so we'll
+    # have to manually create an appropriately empty file.
+    # https://github.com/concourse/s3-resource/issues/21
+- name: receipt-diff
+  type: s3
+  source:
+    endpoint: {{s3-endpoint}}
+    bucket: {{s3-bucket}}
+    regexp: opensusefs2-(.*).receipt.diff$
+    access_key_id: {{s3-access-key}}
+    secret_access_key: {{s3-secret-key}}
+- name: version
+  type: semver
+  source:
+    initial_version: 0.0.0
+    driver: s3
+    endpoint: {{s3-endpoint}}
+    disable_ssl: true
+    bucket: {{s3-bucket}}
+    key: version
+    access_key_id: {{s3-access-key}}
+    secret_access_key: {{s3-secret-key}}
+
+jobs: ##########################################################################
+- name: build-rootfs
+  public: true
+  plan:
+  - aggregate:
+    - get: src-ci
+    - get: stacks-git
+      trigger: true
+    - get: version
+      params: { pre: alpha }
+    - get: receipt
+  - do:
+    - task: make-rootfs
+      privileged: true
+      file: src-ci/concourse/tasks/make-rootfs/task.yml
+      input_mapping:
+        src: stacks-git
+  - put: artifact
+    params:
+      file: out/opensusefs2-*.tar.gz
+      acl: public-read
+  - put: version
+    params: { file: version/version }
+  - put: receipt
+    params:
+      file: out/opensusefs2-*.receipt.txt
+      acl: public-read
+  - put: receipt-diff
+    params:
+      file: out/opensusefs2-*.receipt.diff
+      acl: public-read
