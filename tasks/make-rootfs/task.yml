@@ -11,8 +11,5 @@ inputs:
   - name: receipt
 outputs:
   - name: out
-#outputs:
-#  - name: cflinuxfs2-artifacts
-#  - name: receipt-artifacts
 run:
   path: src-ci/concourse/tasks/make-rootfs/run.sh
