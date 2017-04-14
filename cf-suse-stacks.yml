@@ -18,7 +18,7 @@ resources: #####################################################################
   source:
     endpoint: {{s3-endpoint}}
     bucket: {{s3-bucket}}
-    regexp: opensusefs2-(.*).tar.gz$
+    regexp: opensuse42-(.*).tar.gz$
     access_key_id: {{s3-access-key}}
     secret_access_key: {{s3-secret-key}}
 - name: receipt
@@ -26,7 +26,7 @@ resources: #####################################################################
   source:
     endpoint: {{s3-endpoint}}
     bucket: {{s3-bucket}}
-    regexp: opensusefs2-(.*).receipt.txt$
+    regexp: opensuse42-(.*).receipt.txt$
     access_key_id: {{s3-access-key}}
     secret_access_key: {{s3-secret-key}}
     # Note that s3 resource doesn't support initial name/contents yet, so we'll
@@ -37,7 +37,7 @@ resources: #####################################################################
   source:
     endpoint: {{s3-endpoint}}
     bucket: {{s3-bucket}}
-    regexp: opensusefs2-(.*).receipt.diff$
+    regexp: opensuse42-(.*).receipt.diff$
     access_key_id: {{s3-access-key}}
     secret_access_key: {{s3-secret-key}}
 - name: version
@@ -71,15 +71,15 @@ jobs: ##########################################################################
         src: stacks-git
   - put: artifact
     params:
-      file: out/opensusefs2-*.tar.gz
+      file: out/opensuse42-*.tar.gz
       acl: public-read
   - put: version
     params: { file: version/version }
   - put: receipt
     params:
-      file: out/opensusefs2-*.receipt.txt
+      file: out/opensuse42-*.receipt.txt
       acl: public-read
   - put: receipt-diff
     params:
-      file: out/opensusefs2-*.receipt.diff
+      file: out/opensuse42-*.receipt.diff
       acl: public-read
