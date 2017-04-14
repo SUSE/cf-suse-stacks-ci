@@ -66,7 +66,7 @@ jobs: ##########################################################################
   - do:
     - task: make-rootfs
       privileged: true
-      file: src-ci/concourse/tasks/make-rootfs/task.yml
+      file: src-ci/tasks/make-rootfs/task.yml
       input_mapping:
         src: stacks-git
   - put: artifact

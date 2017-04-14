@@ -12,4 +12,4 @@ inputs:
 outputs:
   - name: out
 run:
-  path: src-ci/concourse/tasks/make-rootfs/run.sh
+  path: src-ci/tasks/make-rootfs/run.sh
