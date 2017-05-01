@@ -10,6 +10,8 @@ STACK_NAME="opensuse42"
 
 src-ci/tasks/common/start-docker.sh
 
+ps -ef
+
 make -C src
 
 versioned_stack_filename="out/${STACK_NAME}${SUFFIX}-$(cat version/number).tar.gz"
