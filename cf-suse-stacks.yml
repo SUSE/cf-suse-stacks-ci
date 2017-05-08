@@ -1,4 +1,4 @@
-# This defines the concourse pipeline used to build the opensusefs2 stack
+# This defines the concourse pipeline used to build the opensuse42 stack
 ---
 resources: #####################################################################
 ### git repos ###
@@ -6,7 +6,7 @@ resources: #####################################################################
   type: git
   source:
     uri: https://github.com/SUSE/cf-suse-stacks.git
-    branch: opensusefs2
+    branch: master
 - name: src-ci
   type: git
   source:
@@ -17,7 +17,7 @@ resources: #####################################################################
   type: s3
   source:
     endpoint: {{s3-endpoint}}
-    bucket: {{s3-bucket}}
+    bucket: opensuse42
     regexp: opensuse42-(.*).tar.gz$
     access_key_id: {{s3-access-key}}
     secret_access_key: {{s3-secret-key}}
@@ -25,7 +25,7 @@ resources: #####################################################################
   type: s3
   source:
     endpoint: {{s3-endpoint}}
-    bucket: {{s3-bucket}}
+    bucket: opensuse42
     regexp: opensuse42-(.*).receipt.txt$
     access_key_id: {{s3-access-key}}
     secret_access_key: {{s3-secret-key}}
@@ -36,7 +36,7 @@ resources: #####################################################################
   type: s3
   source:
     endpoint: {{s3-endpoint}}
-    bucket: {{s3-bucket}}
+    bucket: opensuse42
     regexp: opensuse42-(.*).receipt.diff$
     access_key_id: {{s3-access-key}}
     secret_access_key: {{s3-secret-key}}
@@ -47,7 +47,7 @@ resources: #####################################################################
     driver: s3
     endpoint: {{s3-endpoint}}
     disable_ssl: true
-    bucket: {{s3-bucket}}
+    bucket: opensuse42
     key: version
     access_key_id: {{s3-access-key}}
     secret_access_key: {{s3-secret-key}}
