@@ -13,7 +13,8 @@ src-ci/tasks/common/start-docker.sh
 make -C src
 
 versioned_stack_filename="out/${STACK_NAME}${SUFFIX}-$(cat version/number).tar.gz"
-mv src/${STACK_NAME}.tar.gz "${versioned_stack_filename}"
+mv src/${STACK_NAME}.tar.gz out/
+ln out/${STACK_NAME}.tar.gz "${versioned_stack_filename}"
 
 versioned_receipt_filename="out/${STACK_NAME}${SUFFIX}-$(cat version/number).receipt.txt"
 echo "Rootfs SHASUM: $(sha1sum "$versioned_stack_filename" | awk '{print $1}')" > "$versioned_receipt_filename"
