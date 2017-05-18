@@ -2,18 +2,18 @@
 ---
 resources: #####################################################################
 ### git repos ###
-- name: stacks-git
+- name: src
   type: git
   source:
     uri: https://github.com/SUSE/cf-suse-stacks.git
     branch: master
-- name: src-ci
+- name: ci
   type: git
   source:
     uri: https://github.com/SUSE/cf-suse-stacks-ci.git
     branch: master
 ### blob storage ###
-- name: artifact
+- name: s3.opensuse42
   type: s3
   source:
     endpoint: {{s3-endpoint}}
@@ -22,14 +22,14 @@ resources: #####################################################################
     access_key_id: {{s3-access-key}}
     secret_access_key: {{s3-secret-key}}
 
-- name: docker-image
+- name: docker.opensuse42
   type: docker-image
   source:
     repository: splatform/rootfs-opensuse42
-    username: {{dockerhub-username}}
-    password: {{dockerhub-password}}
+    username: {{docker-username}}
+    password: {{docker-password}}
 
-- name: receipt
+- name: s3.receipt
   type: s3
   source:
     endpoint: {{s3-endpoint}}
@@ -41,7 +41,7 @@ resources: #####################################################################
     # have to manually create an appropriately empty file.
     # https://github.com/concourse/s3-resource/issues/21
 
-- name: receipt-diff
+- name: s3.receipt-diff
   type: s3
   source:
     endpoint: {{s3-endpoint}}
@@ -50,7 +50,7 @@ resources: #####################################################################
     access_key_id: {{s3-access-key}}
     secret_access_key: {{s3-secret-key}}
 
-- name: version
+- name: semver.version
   type: semver
   source:
     initial_version: 0.0.0
@@ -67,45 +67,45 @@ jobs: ##########################################################################
   public: true
   plan:
   - aggregate:
-    - get: src-ci
-    - get: stacks-git
+    - get: ci
+    - get: src
       trigger: true
-    - get: version
+    - get: semver.version
       params: { pre: alpha }
-    - get: receipt
+    - get: s3.receipt
 
   - do:
     - task: make-rootfs
       privileged: true
-      file: src-ci/tasks/make-rootfs/task.yml
+      file: ci/tasks/make-rootfs/task.yml
       input_mapping:
-        src: stacks-git
+        src: src
 
-  - put: artifact
+  - put: s3.opensuse42
     params:
       file: out/opensuse42-*.tar.gz
       acl: public-read
 
-  - put: version
+  - put: semver.version
     params: { file: version/version }
 
-  - put: receipt
+  - put: s3.receipt
     params:
       file: out/opensuse42-*.receipt.txt
       acl: public-read
 
-  - put: receipt-diff
+  - put: s3.receipt-diff
     params:
       file: out/opensuse42-*.receipt.diff
       acl: public-read
 
-  - put: docker-image
+  - put: docker.opensuse42
     params:
       import_file: out/opensuse42.tar.gz
     get_params:
       skip_download: true
 
-  - put: docker-image
+  - put: docker.opensuse42
     params:
       import_file: out/opensuse42.tar.gz
       tag: version/version

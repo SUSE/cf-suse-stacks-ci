@@ -8,7 +8,7 @@ set -o xtrace
 SUFFIX="${STACKS_SUFFIX:-}"
 STACK_NAME="opensuse42"
 
-src-ci/tasks/common/start-docker.sh
+ci/tasks/common/start-docker.sh
 
 make -C src
 
