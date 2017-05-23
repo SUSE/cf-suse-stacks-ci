@@ -87,7 +87,7 @@ jobs: ##########################################################################
       acl: public-read
 
   - put: semver.version
-    params: { file: version/version }
+    params: { file: semver.version/version }
 
   - put: s3.receipt
     params:
@@ -108,6 +108,6 @@ jobs: ##########################################################################
   - put: docker.opensuse42
     params:
       import_file: out/opensuse42.tar.gz
-      tag: version/version
+      tag: semver.version/version
     get_params:
       skip_download: true
