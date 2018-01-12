@@ -16,8 +16,7 @@ resources: #####################################################################
 - name: s3.opensuse42
   type: s3
   source:
-    endpoint: {{s3-endpoint}}
-    bucket: opensuse42
+    bucket: {{s3-bucket}}
     regexp: opensuse42-(.*).tar.gz$
     access_key_id: {{s3-access-key}}
     secret_access_key: {{s3-secret-key}}
@@ -26,15 +25,14 @@ resources: #####################################################################
   type: docker-image
   source:
     repository: splatform/rootfs-opensuse42
-    username: {{docker-username}}
-    password: {{docker-password}}
+    username: {{dockerhub-username}}
+    password: {{dockerhub-password}}
 
 - name: s3.receipt
   type: s3
   source:
-    endpoint: {{s3-endpoint}}
-    bucket: opensuse42
-    regexp: opensuse42-(.*).receipt.txt$
+    bucket: {{s3-bucket}}
+    regexp: rootfs/opensuse42-(.*).receipt.txt$
     access_key_id: {{s3-access-key}}
     secret_access_key: {{s3-secret-key}}
     # Note that s3 resource doesn't support initial name/contents yet, so we'll
@@ -44,9 +42,8 @@ resources: #####################################################################
 - name: s3.receipt-diff
   type: s3
   source:
-    endpoint: {{s3-endpoint}}
-    bucket: opensuse42
-    regexp: opensuse42-(.*).receipt.diff$
+    bucket: {{s3-bucket}}
+    regexp: rootfs/opensuse42-(.*).receipt.diff$
     access_key_id: {{s3-access-key}}
     secret_access_key: {{s3-secret-key}}
 
@@ -55,9 +52,7 @@ resources: #####################################################################
   source:
     initial_version: 0.0.0
     driver: s3
-    endpoint: {{s3-endpoint}}
-    disable_ssl: true
-    bucket: opensuse42
+    bucket: {{s3-bucket}}
     key: version
     access_key_id: {{s3-access-key}}
     secret_access_key: {{s3-secret-key}}
